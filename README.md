@@ -9,8 +9,9 @@
 ## Running test
 
 1. Install dependencies with `forge install`
-2. Run test with `forge test`
+2. Run test with `forge test --fork-url https://coston2-api.flare.network/ext/C/rpc`
 
 ## Description
 
 This repository contains example counter hook for both CL and Bin pool types. 
+

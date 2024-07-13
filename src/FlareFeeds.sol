@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0 <0.9.0;
 
-import {IFlareContractRegistry} from "@flarenetwork/flare-periphery-contracts/coston2/util-contracts/userInterfaces/IFlareContractRegistry.sol";
-import {IFastUpdater} from "@flarenetwork/flare-periphery-contracts/coston2/ftso/userInterfaces/IFastUpdater.sol";
+import {IFlareContractRegistry} from "lib/flare-foundry-periphery-package/src/coston2/util-contracts/userInterfaces/IFlareContractRegistry.sol";
+import {IFastUpdater} from "lib/flare-foundry-periphery-package/src/coston2/util-contracts/userInterfaces/IFastUpdater.sol";
 
 /**
  * THIS IS AN EXAMPLE CONTRACT.

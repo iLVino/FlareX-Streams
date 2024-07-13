@@ -3,8 +3,9 @@ src = 'src'
 out = 'foundry-out'
 solc_version = '0.8.24'
 libs = ["lib"]
-evm_version = 'cancun'
+evm_version = 'london'
 via_ir = true
 
-[dependencies]
-flare-foundry-periphery-package = { path = "./lib/flare-foundry-periphery-package" }
+[profile.flareTest]
+rpc_url = 'https://coston2-api.flare.network/ext/C/rpc'
+chain_id = 114
