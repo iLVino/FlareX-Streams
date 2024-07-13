@@ -19,3 +19,6 @@
 [submodule "flare-foundry-periphery-package"]
 	path = flare-foundry-periphery-package
 	url = https://github.com/flare-foundation/flare-foundry-periphery-package.git
+[submodule "lib/LayerZero"]
+	path = lib/LayerZero
+	url = https://github.com/LayerZero-Labs/LayerZero.git
