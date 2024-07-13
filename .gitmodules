@@ -13,3 +13,6 @@
 [submodule "lib/solmate"]
 	path = lib/solmate
 	url = https://github.com/transmissions11/solmate
+[submodule "lib/flare-foundry-periphery-package"]
+	path = lib/flare-foundry-periphery-package
+	url = https://github.com/flare-foundation/flare-foundry-periphery-package.git
