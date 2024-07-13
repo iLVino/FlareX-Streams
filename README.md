@@ -10,6 +10,8 @@
 
 1. Install dependencies with `forge install`
 2. Run test with `forge test --fork-url https://coston2-api.flare.network/ext/C/rpc`
+3. Deploy with  `forge script script/DeployFtsoV2FeedConsumer.s.sol --rpc-url https://coston2-api.flare.network/ext/C/rpc --private-key $PRIVATE_KEY --broadcast`
+
 
 ## Description
 

@@ -3,33 +3,21 @@ pragma solidity >=0.8.0 <0.9.0;
 
 import {IFlareContractRegistry} from "lib/flare-foundry-periphery-package/src/coston2/util-contracts/userInterfaces/IFlareContractRegistry.sol";
 import {IFastUpdater} from "lib/flare-foundry-periphery-package/src/coston2/util-contracts/userInterfaces/IFastUpdater.sol";
+import "lib/LayerZero/contracts/interfaces/ILayerZeroEndpoint.sol";
+import "lib/LayerZero/contracts/interfaces/ILayerZeroReceiver.sol";
 
-/**
- * THIS IS AN EXAMPLE CONTRACT.
- * DO NOT USE THIS CODE IN PRODUCTION.
- */
-contract FtsoV2FeedConsumer {
+contract FtsoV2FeedConsumer is ILayerZeroReceiver {
     IFlareContractRegistry internal contractRegistry;
     IFastUpdater internal ftsoV2;
-    // Feed indexes: 0 = FLR/USD, 2 = BTC/USD, 9 = ETH/USD
+    ILayerZeroEndpoint public endpoint;
     uint256[] public feedIndexes = [0, 2, 9, 3, 5];
 
-    /**
-     * Constructor initializes the FTSOv2 contract.
-     * The contract registry is used to fetch the FTSOv2 contract address.
-     */
-    constructor() {
-        contractRegistry = IFlareContractRegistry(
-            0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019
-        );
-        ftsoV2 = IFastUpdater(
-            contractRegistry.getContractAddressByName("FastUpdater")
-        );
+    constructor(address _endpoint) {
+        contractRegistry = IFlareContractRegistry(0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019);
+        ftsoV2 = IFastUpdater(contractRegistry.getContractAddressByName("FastUpdater"));
+        endpoint = ILayerZeroEndpoint(_endpoint);
     }
 
-    /**
-     * Get the current value of the feeds.
-     */
     function getFtsoV2CurrentFeedValues()
         external
         view
@@ -39,12 +27,41 @@ contract FtsoV2FeedConsumer {
             uint64 _timestamp
         )
     {
-        (
-            uint256[] memory feedValues,
-            int8[] memory decimals,
-            uint64 timestamp
-        ) = ftsoV2.fetchCurrentFeeds(feedIndexes);
-        /* Your custom feed consumption logic. In this example the values are just returned. */
+        (uint256[] memory feedValues, int8[] memory decimals, uint64 timestamp) = ftsoV2.fetchCurrentFeeds(feedIndexes);
         return (feedValues, decimals, timestamp);
+    }
+
+    function lzReceive(
+        uint16 /*_srcChainId*/,
+        bytes memory /*_srcAddress*/,
+        uint64 /*_nonce*/,
+        bytes memory /*_payload*/
+    ) external       view
+override {
+        require(msg.sender == address(endpoint), "Only endpoint can call this function");
+        // Add your logic to handle the received message
+    }
+
+    function sendMessage(
+        uint16 _dstChainId,
+        bytes calldata _destination,
+        bytes calldata _payload
+    ) external payable {
+        endpoint.send{value: msg.value}(
+            _dstChainId,            // destination chainId
+            _destination,           // destination contract address
+            _payload,               // abi.encode()'ed bytes
+            payable(msg.sender),    // refund address (LayerZero will refund any excess message fee)
+            address(0x0),           // 'zroPaymentAddress' unused for this example
+            bytes("")               // 'adapterParams' unused for this example
+        );
+    }
+
+    function estimateFees(
+        uint16 _dstChainId,
+        bytes calldata /*_destination*/,
+        bytes calldata _payload
+    ) external view returns (uint256 nativeFee, uint256 zroFee) {
+        return endpoint.estimateFees(_dstChainId, address(this), _payload, false, bytes(""));
     }
 }

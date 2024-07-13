@@ -9,3 +9,8 @@ via_ir = true
 [profile.flareTest]
 rpc_url = 'https://coston2-api.flare.network/ext/C/rpc'
 chain_id = 114
+
+
+
+
+
