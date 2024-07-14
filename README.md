@@ -1,6 +1,4 @@
-Here's a detailed README for your project, "FlareX Feeds":
 
----
 
 # FlareX Feeds
 
