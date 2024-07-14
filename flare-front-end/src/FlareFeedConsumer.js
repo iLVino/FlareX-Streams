@@ -29,9 +29,10 @@ const FlareFeedConsumer = () => {
   const [timestamp, setTimestamp] = useState(null);
   const [historicalData, setHistoricalData] = useState([]);
   const [dstChainId, setDstChainId] = useState(10002); // Example destination chain ID
-  const [destination, setDestination] = useState("0x..."); // Destination address on the destination chain
+  const [destination, setDestination] = useState("0x3d875Eb57275a2Df3DfD187fe0e9fF7Ae87b0BC3"); // Destination address on the destination chain
   const [swapAmount, setSwapAmount] = useState("");
   const [swapPayload, setSwapPayload] = useState("");
+  const [selectedPair, setSelectedPair] = useState("");
   const [walletConnected, setWalletConnected] = useState(false);
 
   const contractAddress = "0xF7bA1f45aFC2937DdADBAcE862144D0a8e6732aC"; // Replace with your deployed contract address
@@ -117,6 +118,10 @@ const FlareFeedConsumer = () => {
     setDstChainId(e.target.value);
   };
 
+  const handlePairChange = (e) => {
+    setSelectedPair(e.target.value);
+  };
+
   return (
     <div>
       <AppBar position="static">
@@ -161,6 +166,20 @@ const FlareFeedConsumer = () => {
                     <Typography variant="h5" component="div">
                       Cross-Chain Swap
                     </Typography>
+                    <FormControl fullWidth margin="normal">
+                      <InputLabel id="pair-label">Select Pair</InputLabel>
+                      <Select
+                        labelId="pair-label"
+                        value={selectedPair}
+                        onChange={handlePairChange}
+                      >
+                        {assetPairs.map((pair, index) => (
+                          <MenuItem key={index} value={pair}>
+                            {pair}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
                     <FormControl fullWidth margin="normal">
                       <TextField
                         label="Amount to Swap"

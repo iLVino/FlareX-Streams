@@ -9,3 +9,4 @@ foundry-out/
 .idea
 .env
 
+.vercel
