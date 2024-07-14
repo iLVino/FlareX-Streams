@@ -160,8 +160,5 @@ By following this README, you should be able to set up, deploy, and use the Flar
 3. Deploy with  `forge script script/DeployFtsoV2FeedConsumer.s.sol --rpc-url https://coston2-api.flare.network/ext/C/rpc --private-key $PRIVATE_KEY --broadcast`
 
 
-## Description
-
-This repository contains example counter hook for both CL and Bin pool types. 
 
 
