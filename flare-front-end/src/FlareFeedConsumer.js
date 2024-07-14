@@ -1,5 +1,3 @@
-// 0x71abD4a0A96133978e3C0C6f09144A441b895F31
-
 import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import Big from 'big.js';
@@ -17,7 +15,9 @@ import {
   Select,
   MenuItem,
   InputLabel,
-  FormControl
+  FormControl,
+  CircularProgress,
+  Alert,
 } from '@mui/material';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
@@ -28,14 +28,16 @@ const FlareFeedConsumer = () => {
   const [feedValues, setFeedValues] = useState([]);
   const [timestamp, setTimestamp] = useState(null);
   const [historicalData, setHistoricalData] = useState([]);
-  const [dstChainId, setDstChainId] = useState(10002); // Example destination chain ID
-  const [destination, setDestination] = useState("0x3d875Eb57275a2Df3DfD187fe0e9fF7Ae87b0BC3"); // Destination address on the destination chain
+  const [dstChainId, setDstChainId] = useState(40217); // Example destination chain ID
+  const [destination, setDestination] = useState("0x93eC5e12AC770eF01920dF0D870b5A075937b55b"); // Destination address on the destination chain
   const [swapAmount, setSwapAmount] = useState("");
   const [swapPayload, setSwapPayload] = useState("");
   const [selectedPair, setSelectedPair] = useState("");
   const [walletConnected, setWalletConnected] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [alert, setAlert] = useState(null);
 
-  const contractAddress = "0xF7bA1f45aFC2937DdADBAcE862144D0a8e6732aC"; // Replace with your deployed contract address
+  const contractAddress = "0x49d1F9f16B431D8DD8cE2E233f145F706C293753"; // Replace with your deployed contract address
   const abi = FtsoV2FeedConsumerABI.abi;
   const assetPairs = ["FLR/USD", "BTC/USD", "ETH/USD", "Pair 3", "Pair 5"]; // Add or modify as needed
 
@@ -93,16 +95,32 @@ const FlareFeedConsumer = () => {
 
   const sendMessage = async () => {
     if (contract) {
+      setLoading(true);
+      setAlert(null);
       try {
+        const amount = parseInt(swapAmount);
+        if (isNaN(amount)) {
+          throw new Error("Invalid swap amount");
+        }
+
         const payload = ethers.utils.defaultAbiCoder.encode(
-          ["string"],
-          [swapPayload]
+          ["string", "uint256"],
+          [swapPayload, amount]
         );
-        const fees = await contract.estimateFees(dstChainId, destination, payload);
-        await contract.sendMessage(dstChainId, destination, payload, { value: fees[0] });
+        const options = ethers.utils.defaultAbiCoder.encode(
+          ["uint256"], [3000000] // Example option: gas limit
+        );
+        const tx = await contract.send(dstChainId, payload, options, {
+          value: ethers.utils.parseEther("0.1"), // Adjust the value as needed
+          gasLimit: 5000000 // Manually specify the gas limit
+        });
+        await tx.wait();
+        setAlert({ type: 'success', message: 'Message sent successfully' });
       } catch (error) {
         console.error("Error sending message:", error);
+        setAlert({ type: 'error', message: error.message });
       }
+      setLoading(false);
     }
   };
 
@@ -120,6 +138,10 @@ const FlareFeedConsumer = () => {
 
   const handlePairChange = (e) => {
     setSelectedPair(e.target.value);
+  };
+
+  const handleDestinationChange = (e) => {
+    setDestination(e.target.value);
   };
 
   return (
@@ -189,7 +211,7 @@ const FlareFeedConsumer = () => {
                     </FormControl>
                     <FormControl fullWidth margin="normal">
                       <TextField
-                        label="Payload (e.g., destination address)"
+                        label="Payload (e.g., message)"
                         value={swapPayload}
                         onChange={handleSwapPayloadChange}
                       />
@@ -201,13 +223,25 @@ const FlareFeedConsumer = () => {
                         value={dstChainId}
                         onChange={handleDstChainIdChange}
                       >
-                        <MenuItem value={10002}>Chain 1</MenuItem>
-                        <MenuItem value={10003}>Chain 2</MenuItem>
+                        <MenuItem value={40217}>Holesky</MenuItem>
+                        <MenuItem value={40231}>Arbitrum Sepolia Testnet</MenuItem>
                       </Select>
                     </FormControl>
-                    <Button variant="contained" color="primary" onClick={sendMessage}>
-                      Send LayerZero Message
+                    <FormControl fullWidth margin="normal">
+                      <TextField
+                        label="Destination Address"
+                        value={destination}
+                        onChange={handleDestinationChange}
+                      />
+                    </FormControl>
+                    <Button variant="contained" color="primary" onClick={sendMessage} disabled={loading}>
+                      {loading ? <CircularProgress size={24} /> : 'Send LayerZero Message'}
                     </Button>
+                    {alert && (
+                      <Alert severity={alert.type} style={{ marginTop: 20 }}>
+                        {alert.message}
+                      </Alert>
+                    )}
                   </CardContent>
                 </Card>
               </Grid>

@@ -9,7 +9,7 @@ contract DeployFtsoV2FeedConsumer is Script {
         vm.startBroadcast();
 
         // Deploy the contract
-        FtsoV2FeedConsumer feedConsumer = new FtsoV2FeedConsumer(address(0xCb2ED59c9427a43f72e2D31e1a51b33209AaEc96));
+        FtsoV2FeedConsumer feedConsumer = new FtsoV2FeedConsumer(address(0x6EDCE65403992e310A62460808c4b910D972f10f));
 
         // Log the address of the deployed contract
         console.log("FtsoV2FeedConsumer deployed to:", address(feedConsumer));

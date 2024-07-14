@@ -83,6 +83,10 @@ forge install
 
 The `FtsoV2FeedConsumer` smart contract interacts with FTSOv2 to fetch price feed data and uses LayerZero for cross-chain messaging.
 Deployed address : 0xF7bA1f45aFC2937DdADBAcE862144D0a8e6732aC
+                 : 0x79A7D7cF40945596896E9E89143fbecbeDCA3220
+                 : 0x24f219695Ba0978DB36a3f22F7299533bbc5b2dd
+                 : 0x367ca4cCDE4d6a3f5EE63B8843A80A1B0Bd107cC
+                 : 0x49d1F9f16B431D8DD8cE2E233f145F706C293753
 
 
 ### Contract Source
